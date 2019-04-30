@@ -1,0 +1,22 @@
+{
+  "name": "recap-harvest",
+  "version": "1.0.0",
+  "description": "let's build some tsv files from the case.law api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PublicGoodStudio/recap-harvest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PublicGoodStudio/recap-harvest/issues"
+  },
+  "homepage": "https://github.com/PublicGoodStudio/recap-harvest#readme",
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
