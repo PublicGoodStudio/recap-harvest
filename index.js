@@ -15,7 +15,7 @@ var filtered_jurisdictions = jurisdictions.filter(function(x) {
   return ignore_jurisdictions.indexOf(x) < 0;
 });
 
-filtered_jurisdictions = ['wis', 'w-va', 'wyo']
+filtered_jurisdictions = ['mont']
 
 //// DEBUG:
 const timer = ms => new Promise( res => setTimeout(res, ms));
