@@ -1,20 +1,25 @@
 const request = require('request');
 const fs = require('fs');
+process.env.UV_THREADPOOL_SIZE = 128;
+
 
 const url = 'https://api.case.law/v1/cases/';
 var params;
 
 const jurisdictions = require("./data/src/helpers/jurisdictions.json");
 const ignore_jurisdictions = ['am-samoa', 'dakota-territory', 'dc', 'guam', 'montchr', 'native-american','navajo-nation', 'n-mar-i',
-                            'pr', 'regional', 'tribal', 'us', 'vi'];
+                            'pr', 'regional', 'tribal', 'us', 'vi',
+                            'ala', 'alaska', 'ariz', 'ark', 'colo', 'conn', 'del', 'fla', 'ga', 'haw'];
 
 var filtered_jurisdictions = jurisdictions.filter(function(x) {
   return ignore_jurisdictions.indexOf(x) < 0;
 });
 
+filtered_jurisdictions = ['wis', 'w-va', 'wyo']
+
 //// DEBUG:
 const timer = ms => new Promise( res => setTimeout(res, ms));
-filtered_jurisdictions = ['fla'];
+
 
 const jurisdiction_header = ['case_id', 'case_name_abbreviation', 'decision_date', 'court_id'];
 
@@ -29,10 +34,15 @@ function get_page_of_results(next_url, params) {
   console.log('processing ' + params.jurisdiction);
 
   var case_values = [];
-  request.get({url:next_url, qs:params, json:true}, function (error, response, body) {
+  request.get({url:next_url, qs:params, json:true, timeout: 20000, agent: false, pool: {maxSockets: 100}}, function (error, response, body) {
     if (error) {
       console.log(error);
+      console.log(error.code === 'ETIMEDOUT');
     }
+
+    console.log('statusCode:', response && response.statusCode);
+
+
     if (body && body.hasOwnProperty('results')) {
       for (var result in body.results) {
         case_values.push(body.results[result].id);
@@ -45,8 +55,14 @@ function get_page_of_results(next_url, params) {
       }
 
       if (body.next !== null) {
-        timer(500).then(_=>get_page_of_results(body.next, params));
+        console.log(body.next);
+        timer(100).then(_=>get_page_of_results(body.next, params));
+      } else {
+        console.log('body was null');
       }
+      //console.log(error);
+      //console.log(response);
+      //console.log(body);
     }
   });
 
